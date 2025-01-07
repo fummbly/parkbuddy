@@ -1,17 +1,34 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"log"
-	"os"
+
+	xmlHelper "github.com/fummbly/parkbuddy/internal/xml"
 )
 
 func main() {
-	data, err := os.ReadFile("./data/map/planet_-71.277,42.263_-70.932,42.441.osm")
+
+	data, err := xmlHelper.ReadFile()
+
 	if err != nil {
-		log.Fatalf("Failed to open file: %v\n", err)
+		log.Fatalf("Failed to read file: %v\n", err)
+		return
 	}
 
-	fmt.Println(string(data))
+	v := xmlHelper.OSM{}
+
+	err = xml.Unmarshal(data, &v)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal xml: %v\n", err)
+		return
+	}
+
+	for _, node := range v.Nodes {
+		fmt.Printf("ID: %d\n", node.ID)
+		fmt.Printf("Tags: %v\n", node.Tags)
+
+	}
 
 }
