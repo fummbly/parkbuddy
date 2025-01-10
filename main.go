@@ -2,13 +2,36 @@ package main
 
 import (
 	"encoding/xml"
-	"fmt"
+	"io"
 	"log"
+	"text/template"
 
 	xmlHelper "github.com/fummbly/parkbuddy/internal/xml"
+	"github.com/labstack/echo/v4"
 )
 
+type Templates struct {
+	templates *template.Template
+}
+
+func (t *Templates) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
+}
+
+func newTemplate() *Templates {
+	return &Templates{
+		templates: template.Must(template.ParseGlob("views/*.html")),
+	}
+}
+
 func main() {
+
+	e := echo.New()
+
+	e.Renderer = newTemplate()
+
+	e.Static("/css", "css")
+	e.Static("/scripts", "scripts")
 
 	data, err := xmlHelper.ReadFile()
 
@@ -25,10 +48,8 @@ func main() {
 		return
 	}
 
-	for _, node := range v.Nodes {
-		fmt.Printf("ID: %d\n", node.ID)
-		fmt.Printf("Tags: %v\n", node.Tags)
-
-	}
-
+	e.GET("/", func(c echo.Context) error {
+		return c.Render(200, "index", nil)
+	})
+	e.Logger.Fatal(e.Start(":8080"))
 }
