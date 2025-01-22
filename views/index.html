@@ -6,23 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/style.css">
+    <script src="/scripts/wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      WebAssembly.instantiateStreaming(fetch("/scripts/main.wasm"), go.importObject).then((result) => {
+        go.run(result.instance);
+      });
+    </script>
   </head>
   <body>
-    <canvas id="canvas"></canvas>
   </body>
-  <script src="/scripts/mapping.js"></script>
-  <script>
-
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "green";
-    ctx.fillRect(10,10, 1, 1);
-
-    printSquare(100, 100, ctx)
-
-
-  </script>
 </html>
 
 {{ end }}
