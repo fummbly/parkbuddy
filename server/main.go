@@ -1,12 +1,9 @@
 package main
 
 import (
-	"encoding/xml"
 	"io"
-	"log"
 	"text/template"
 
-	xmlHelper "github.com/fummbly/parkbuddy/internal/xml"
 	"github.com/labstack/echo/v4"
 )
 
@@ -29,27 +26,28 @@ func main() {
 	e := echo.New()
 
 	e.Renderer = newTemplate()
-
 	e.Static("/css", "css")
 	e.Static("/scripts", "scripts")
+	/*
+		data, err := xmlHelper.ReadFile()
 
-	data, err := xmlHelper.ReadFile()
+		if err != nil {
+			log.Fatalf("Failed to read file: %v\n", err)
+			return
+		}
 
-	if err != nil {
-		log.Fatalf("Failed to read file: %v\n", err)
-		return
-	}
+		v := xmlHelper.OSM{}
 
-	v := xmlHelper.OSM{}
+		err = xml.Unmarshal(data, &v)
+		if err != nil {
+			log.Fatalf("Failed to unmarshal xml: %v\n", err)
+			return
+		}
 
-	err = xml.Unmarshal(data, &v)
-	if err != nil {
-		log.Fatalf("Failed to unmarshal xml: %v\n", err)
-		return
-	}
-
+	*/
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(200, "index", nil)
 	})
 	e.Logger.Fatal(e.Start(":8080"))
+
 }
